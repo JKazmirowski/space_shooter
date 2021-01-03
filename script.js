@@ -6,6 +6,17 @@ const startButton = document.querySelector('.start-button');
 let windowsize = screen.width;
 let alienInterval;
 
+
+
+
+var somDisparo = document.getElementById('somDisparo');
+var somExplosao = document.getElementById('somExplosao');
+var somFundo = document.getElementById('somFundo');
+var somGameover = document.getElementById('somGameover');
+var somStart = document.getElementsByClassName('somStart')[0];
+//Música em loop
+somStart.addEventListener("ended", function(){ somStart.currentTime = 0; somStart.play();}, false);
+somStart.play();
 //movimento e tiro da nave
 function flyShip(event) {
     if(event.key === 'e') {
@@ -50,6 +61,7 @@ function fireLaser() {
     let laser = createLaserElement();
     playArea.appendChild(laser);
     moveLaser(laser);
+    somDisparo.play();
 }
 
 function createLaserElement() {
@@ -123,6 +135,8 @@ function checkLaserCollision(laser, alien) {
     let alienBottom = alienTop - 30;
     if(laserLeft != windowsize && laserLeft + 40 >= alienLeft) {
         if(laserTop <= alienTop && laserTop >= alienBottom) {
+            somDisparo.pause();
+            somExplosao.play();
             return true;
         } else {
             return false;
@@ -135,7 +149,10 @@ function checkLaserCollision(laser, alien) {
 //inicio do jogo
 startButton.addEventListener('click', (event) => {
     playGame();
-})
+    somStart.pause();
+    somFundo.addEventListener("ended", function(){ somFundo.currentTime = 0; somFundo.play();}, false);
+    somFundo.play();
+});
 
 function playGame() {
     startButton.style.display = 'none';
@@ -148,6 +165,8 @@ function playGame() {
 
 //função de game over
 function gameOver() {
+    somFundo.pause();
+    somGameover.play();
     window.removeEventListener('keydown', flyShip);
     clearInterval(alienInterval);
     let aliens = document.querySelectorAll('.alien');
@@ -155,7 +174,7 @@ function gameOver() {
     let lasers = document.querySelectorAll('.laser');
     lasers.forEach((laser) => laser.remove());
     setTimeout(() => {
-        alert('game over!');
+        alert('Game Over!');
         yourShip.style.top = "250px";
         startButton.style.display = "block";
         instructionsText.style.display = "block";
